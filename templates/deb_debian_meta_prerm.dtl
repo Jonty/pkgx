@@ -16,8 +16,11 @@ case $1 in
             ok = case rpc:call(Target, release_handler, set_removed, [\"{{ dep_version }}\"], 300000) of
                 ok ->
                     ok;
-                {no_such_release, _} ->
-                    ok
+                {error, {no_such_release, _}} ->
+                    ok;
+                {error, {permanent,\"{{ dep_version }}\"}} ->
+                    io:format(\"{{ dep_version }} is the permenant release, and running, so not removing!~n\"),
+                    erlang:halt(1)
             end,
             init:stop()."
 
